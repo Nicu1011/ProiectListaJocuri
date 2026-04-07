@@ -70,5 +70,5 @@ bin/
 .settings/
 
 # Optional: ignore Eclipse project files too
-.project
-.cproject
+# .project
+# .cproject
