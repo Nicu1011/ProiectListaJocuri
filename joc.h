@@ -3,6 +3,7 @@
 
 #include "valuta.h"
 
+
 typedef enum{
 	SINGLEPLAYER,
 	MULTIPLAYER,
@@ -25,67 +26,46 @@ typedef enum{
 	STORY_RICH,
 
 	NR_TAGURI
-
 } TAGURIJOC;
-const char *numeTag[NR_TAGURI] = {
-		"SINGLEPLAYER",
-		"MULTIPLAYER",
-		"PVE",
-		"PVP",
-		"COOP",
-		"FIRST_PERSON",
-		"THIRD_PERSON",
-		"RPG",
-		"MMORPG",
-		"OPEN_WORLD",
-		"SOULS_LIKE",
-		"FANTASY",
-		"DIFFICULT",
-		"ATMOSPHERIC",
-		"SANDBOX",
-		"SHOOTER",
-		"FPS",
-		"SURVIVAL",
-		"STORY_RICH"
-
-};
+extern const char *NUMETAG[NR_TAGURI];
 
 typedef struct{
 	int ore;
 	int min;
 	int sec;
 
-} timp_t;
+} TIMP;
 
 typedef struct{
 	int an;
 	int luna;
 	int zi;
-	timp_t timp;
 
-} data_t;
-
-
+} DATA;
 
 typedef struct{
 	char nume[50];
-	char descriere[100];
 	char dezvoltator[50], publicant[50];
 	char taguri[NR_TAGURI];//index -> ENUM cu indexul tagului
 	// valoare in sine e 0 daca nu are tag si 1 daca are acel tag
 
-	int favorit: 1;// 0 1
+	int favorit;// 0 1
 	int clasament;// 0 ... N
 	int nota; // 0 ... 10
 
-	data_t dataLansare, dataPrimuJoc, dataUltimJoc;
-	timp_t timpJucat;
+	DATA data_lansare, data_primu_joc, data_ultim_joc;
+	TIMP timp_jucat;
 
-	float spatiuNecesar; //GB
+	float spatiu_necesar; //GB
 
-	pret_t pret, pretTimpJucat;
+	PRET pret, pret_timp_jucat;
 
-} jocvideo_t;
+} JOCVIDEO;
 
+#define MAX_LIST 50
+extern JOCVIDEO lista_jocuri[MAX_LIST];
+extern int lista_n;
+
+void citire_lista_jocuri(char str_file[]);
 
 #endif /* JOC_H_ */

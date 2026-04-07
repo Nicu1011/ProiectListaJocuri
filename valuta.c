@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include "valuta.h"
 
-pret_t citire_curs_valutar(MONEDA monedaPrincipala)
+PRET citire_curs_valutar(MONEDA moneda_principala)
 {
 	int i = 0;
-	pret_t moneda[NR_MONEDE];
+
+	PRET moneda[NR_MONEDE];
 	FILE *fin = fopen("cursuri_valutare.txt", "r");
 	if(!fin){
 		printf("Cursurile valutare nu au fost gasite!\n");
@@ -28,5 +29,5 @@ pret_t citire_curs_valutar(MONEDA monedaPrincipala)
 	}
 
 	fclose(fin);
-	return moneda[monedaPrincipala];
+	return moneda[moneda_principala];
 }

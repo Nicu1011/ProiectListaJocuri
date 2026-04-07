@@ -16,8 +16,8 @@ typedef struct{
 	float USD;
 	float GBP;
 
-} pret_t;
+} PRET;
 
-pret_t citire_curs_valutar(const MONEDA monedaPrincipala);
+PRET citire_curs_valutar(const MONEDA moneda_principala);
 
 #endif /* VALUTA_H_ */

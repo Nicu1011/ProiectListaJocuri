@@ -4,7 +4,7 @@
 
 #include "joc.h"
 
-void getTimp(){
+void get_timp(){
 	time_t timp = time(NULL);
 	struct tm *timpLocal = localtime(&timp);
 
@@ -38,10 +38,13 @@ void meniu_lista()
 
 int main()
 {
-	pret_t curs_citit;
-	curs_citit = citire_curs_valutar(RON);
-
-	printf("RON: %.2f\nEUR: %.2f\nUSD: %.2f\nGBP: %.2f",
-			curs_citit.RON, curs_citit.EUR, curs_citit.USD, curs_citit.GBP);
+	citire_lista_jocuri("lista_jocuri.txt");
+	int i=0;
+	for(i=0; i<lista_n; i++)
+	{
+		printf("%s %s %d-%d-%d\n",
+				lista_jocuri[i].nume, lista_jocuri[i].dezvoltator,
+				lista_jocuri[i].data_lansare.zi, lista_jocuri[i].data_lansare.luna, lista_jocuri[i].data_lansare.an);
+	}
     return 0;
 }
