@@ -1,0 +1,15 @@
+/*
+Proiect -> Lista Jocuri Video
+
+Date intrare: 
+
+Nume(str) Desc(str) 
+TimpJucat(TIMP) DataPrimuluiJoc(DATA) 
+Favorit(1/0) Clasament(1...n) Nota(0...10) 
+Pret(PRET.RON)
+
+
+Date iesire: TBA
+
+
+*/
