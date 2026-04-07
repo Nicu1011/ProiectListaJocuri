@@ -53,3 +53,22 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Build folders
+Debug/
+Release/
+build/
+bin/
+
+# Compiled files
+*.o
+*.obj
+*.out
+*.exe
+
+# Eclipse settings
+.settings/
+
+# Optional: ignore Eclipse project files too
+# .project
+# .cproject
