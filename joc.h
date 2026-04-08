@@ -3,7 +3,6 @@
 
 #include "valuta.h"
 
-
 typedef enum{
 	SINGLEPLAYER,
 	MULTIPLAYER,
@@ -54,18 +53,16 @@ typedef struct{
 	int nota; // 0 ... 10
 
 	DATA data_lansare, data_primu_joc, data_ultim_joc;
-	TIMP timp_jucat;
+	TIMP timp_jucat;// sec
 
 	float spatiu_necesar; //GB
 
-	PRET pret, pret_timp_jucat;
+	VALUTA pret, pret_timp_jucat;
 
 } JOCVIDEO;
 
 #define MAX_LIST 50
-extern JOCVIDEO lista_jocuri[MAX_LIST];
-extern int lista_n;
-
-void citire_lista_jocuri(char str_file[]);
+extern int n_list;
+JOCVIDEO* citire_lista_jocuri(char* str_file);
 
 #endif /* JOC_H_ */

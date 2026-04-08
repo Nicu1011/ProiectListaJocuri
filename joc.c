@@ -24,13 +24,14 @@ const char *NUMETAG[NR_TAGURI] = {
 		"STORY_RICH"
 };
 
-JOCVIDEO lista_jocuri[MAX_LIST];
-int lista_n = 0;
+int n_list = 0;
 
-void citire_lista_jocuri(char str_file[]){
+JOCVIDEO* citire_lista_jocuri(char* str_file){
 	int i = 0;
 
-	FILE *fin = fopen(str_file, "r");
+	JOCVIDEO lista_jocuri[MAX_LIST];
+
+	FILE* fin = fopen(str_file, "r");
 	if(!fin){
 		printf("Lista jocurilor personale nu a fost gasita!\n");
 
@@ -64,5 +65,9 @@ void citire_lista_jocuri(char str_file[]){
 				&lista_jocuri[i].spatiu_necesar, &lista_jocuri[i].pret.EUR);
 		i++;
 	}
-	lista_n = i;
+	n_list = i;
+
+	JOCVIDEO* p_lista = lista_jocuri;
+
+	return p_lista;
 }

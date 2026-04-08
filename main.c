@@ -1,3 +1,8 @@
+/*
+Proiect inceput pe 07.04.2026
+Total timp pierdut p'aici: ~10h
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -38,13 +43,19 @@ void meniu_lista()
 
 int main()
 {
-	citire_lista_jocuri("lista_jocuri.txt");
-	int i=0;
-	for(i=0; i<lista_n; i++)
-	{
-		printf("%s %s %d-%d-%d\n",
-				lista_jocuri[i].nume, lista_jocuri[i].dezvoltator,
-				lista_jocuri[i].data_lansare.zi, lista_jocuri[i].data_lansare.luna, lista_jocuri[i].data_lansare.an);
-	}
+	VALUTA pr, conv;
+	VALUTA* curs_valutar = citire_curs_valutar("abc.txt");
+
+	pr.RON = 200.0, pr.EUR=0, pr.USD=0, pr.GBP=0;
+	printf("%.2f %.2f %.2f %.2f\n", pr.RON, pr.EUR, pr.USD, pr.GBP);
+	conv = convertire_valuta_p(curs_valutar, pr, RON);
+	printf("%.2f %.2f %.2f %.2f\n", conv.RON, conv.EUR, conv.USD, conv.GBP);
+
+	float eur_pret = 60.00;
+	float ron_pret;
+	ron_pret = convertire_valuta_f(curs_valutar, eur_pret, EUR, RON);
+	printf("%.2f\n", ron_pret);
+	fflush(stdout);
+
     return 0;
 }
