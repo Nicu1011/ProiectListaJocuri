@@ -1,25 +1,23 @@
 #ifndef VALUTA_H_
 #define VALUTA_H_
 
+
 typedef enum {
 	RON,
 	EUR,
 	USD,
 	GBP,
+	IMAGINAR,
 
 	NR_MONEDE
 } MONEDA;
 
-typedef struct{
-	float RON;
-	float EUR;
-	float USD;
-	float GBP;
+typedef float VALUTA[NR_MONEDE];
+typedef float CURS[NR_MONEDE][NR_MONEDE];
 
-} VALUTA;
+void fcitire_curs_valutar(const char* nume_fisier, CURS curs);
 
-VALUTA* citire_curs_valutar(char* str_file);
-VALUTA convertire_valuta_p(VALUTA* curs_valutar, VALUTA val, MONEDA m_principal);
-float convertire_valuta_f(VALUTA* curs_valutar, float val, MONEDA moneda_in, MONEDA moneda_out);
+void convertire_valuta_v(const CURS curs, const VALUTA val, VALUTA val_conv, const MONEDA m_principal);
+float convertire_valuta_f(const CURS curs, const float val, const MONEDA moneda_in, const MONEDA moneda_out);
 
 #endif /* VALUTA_H_ */

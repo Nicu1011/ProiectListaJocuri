@@ -1,4 +1,3 @@
-NUME				DEZVOLTATOR	PUBLICANT		F	R	No	LANSARE		FIRST_JOC	LAST_JOC	TIMP_JOC	MEM		PRET€	TAGURI[NR_TAGURI]...
-EldenRing			FromSoft	BandaiNamco		1	1	10	25-02-2022	21-06-2025	06-04-2026	0045:06:31	46.50	60.00	1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-CounterStrike		Valve		Valve			1	2	8	21-08-2013	26-03-2018	06-04-2026	1250:54:00	58.51	00.00	1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-LeagueOfLegends		RiotGames	Riot			0	99	1	27-09-2009	27-03-2018	07-04-2026	2400:30:00	31.45	00.00	1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+           EldenRing             FromSoft          BandaiNamco 1  1 10 25-02-2022 21-06-2025 06-04-2026 0045_06_31 046.50 60.00 1 1 0 1 0 1 1 0 0 0 0 0 1 0 0 0 0 0 0 
+       CounterStrike                Valve                Valve 1  2  8 21-08-2013 26-03-2018 06-04-2026 1250_54_00 058.51 00.00 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 
+     LeagueOfLegends            RiotGames                 Riot 0 99  1 27-09-2009 27-03-2018 07-04-2026 2400_30_00 031.45 00.00 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 

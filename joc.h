@@ -1,32 +1,13 @@
 #ifndef JOC_H_
 #define JOC_H_
 
+
 #include "valuta.h"
+#include "tag.h"
 
-typedef enum{
-	SINGLEPLAYER,
-	MULTIPLAYER,
-	PVE,
-	PVP,
-	COOP,
-	FIRST_PERSON,
-	THIRD_PERSON,
-	RPG,
-	MMORPG,
-	OPEN_WORLD,
-	SOULS_LIKE,
-	FANTASY,
-	DIFFICULT,
-	ATMOSPHERIC,
-	SANDBOX,
-	SHOOTER,
-	FPS,
-	SURVIVAL,
-	STORY_RICH,
-
-	NR_TAGURI
-} TAGURIJOC;
-extern const char *NUMETAG[NR_TAGURI];
+#define FORMAT_LISTA_R "%s %s %s %d %d %d %d-%d-%d %d-%d-%d %d-%d-%d %d_%d_%d %f %f "
+#define FORMAT_LISTA_W "%20s %20s %20s %1d %2d %2d %02d-%02d-%04d %02d-%02d-%04d %02d-%02d-%04d %04d_%02d_%02d %6.2f %6.2f "
+#define FORMAT_TAG "%d "
 
 typedef struct{
 	int ore;
@@ -45,15 +26,15 @@ typedef struct{
 typedef struct{
 	char nume[50];
 	char dezvoltator[50], publicant[50];
-	char taguri[NR_TAGURI];//index -> ENUM cu indexul tagului
+	int taguri[NR_TAGURI];//index -> ENUM cu indexul tagului
 	// valoare in sine e 0 daca nu are tag si 1 daca are acel tag
 
-	int favorit;// 0 1
-	int clasament;// 0 ... N
-	int nota; // 0 ... 10
+	int favorit;
+	int clasament;
+	int nota;
 
 	DATA data_lansare, data_primu_joc, data_ultim_joc;
-	TIMP timp_jucat;// sec
+	TIMP timp_jucat;
 
 	float spatiu_necesar; //GB
 
@@ -61,8 +42,22 @@ typedef struct{
 
 } JOCVIDEO;
 
-#define MAX_LIST 50
-extern int n_list;
-JOCVIDEO* citire_lista_jocuri(char* str_file);
+typedef struct{
+	JOCVIDEO* jocuri;
+	int n;
+} LISTAJOC;
 
+#define MAX_LIST 50
+
+int f_citire_nr_linii(const char* nume_fisier);
+
+LISTAJOC fcitire_lista_jocuri(const char* nume_fisier);
+//citeste un fisier cu numele 'nume_fisier' si returneaza un pointer catre un vector de JOCVIDEO
+//de asemenea salveaza si in n_list cate valori a gasit in fisier
+void fcreare_lista_jocuri(const char* nume_fisier, const LISTAJOC lista);
+//creaza un fisier cu numele 'nume_fisier'
+
+
+LISTAJOC calc_pret_timp(LISTAJOC lista);
+//calculeaza pretul pe timpul jucat si returneaza lista rezultat;
 #endif /* JOC_H_ */
