@@ -2,96 +2,42 @@
 #include <stdio.h>
 #include "valuta.h"
 
-VALUTA* citire_curs_valutar(char* str_file)
+void fcitire_curs_valutar(const char* nume_fisier, float curs[NR_MONEDE][NR_MONEDE])
 {
+	if(!nume_fisier)
+		nume_fisier = "cursuri_valutare_default.txt";
+
 	int i = 0;
 
-	VALUTA* moneda = (VALUTA*)malloc(sizeof(VALUTA) * NR_MONEDE);
-	FILE* fin = fopen(str_file, "r");
-	if(!fin){
-		printf("Cursurile valutare nu au fost gasite!\n");
-
-		printf("Se vor folosi cursurile valutare implicite.\n");
+	FILE* fin = fopen(nume_fisier, "r");
+	if(!fin)
+	{
+		printf("Eroare la citirea cursurilor valutare! (fisier)\n");
 		fflush(stdout);
-
-		fin = fopen("cursuri_valutare_default.txt", "r");
-
-		if(!fin){
-			printf("Eroare la citirea cursurilor valutare! (fisier)\n");
-			fflush(stdout);
-			exit(1);
-		}
+		exit(1);
 	}
 
-	while(feof(fin) == 0){
-		fscanf(fin, "%f%f%f%f", &moneda[i].RON, &moneda[i].EUR, &moneda[i].USD, &moneda[i].GBP);
+	while(feof(fin) == 0)
+	{
+		for(int j=0; j<NR_MONEDE; j++)
+		{
+			fscanf(fin, "%f", &curs[i][j]);
+		}
 		i++;
 	}
-
 	fclose(fin);
-	return moneda;
 }
 
-VALUTA convertire_valuta_p(VALUTA* curs_valutar, VALUTA val, MONEDA moneda_principala){
-	VALUTA val_convertit;
+void convertire_valuta_v(const CURS curs, const VALUTA val, VALUTA val_conv, const MONEDA moneda_principala)
+{
+	for(int i=0; i<NR_MONEDE; i++)
+		val_conv[i] = val[i] * curs[moneda_principala][i];
 
-	switch(moneda_principala){
-	case RON:
-		val_convertit.RON = val.RON;
-		val_convertit.EUR = val.RON * curs_valutar[moneda_principala].EUR;
-		val_convertit.USD = val.RON * curs_valutar[moneda_principala].USD;
-		val_convertit.GBP = val.RON * curs_valutar[moneda_principala].GBP;
-		break;
-
-	case EUR:
-		val_convertit.EUR = val.EUR;
-		val_convertit.RON = val.EUR * curs_valutar[moneda_principala].RON;
-		val_convertit.USD = val.EUR * curs_valutar[moneda_principala].USD;
-		val_convertit.GBP = val.EUR * curs_valutar[moneda_principala].GBP;
-		break;
-
-	case USD:
-		val_convertit.USD = val.USD;
-		val_convertit.RON = val.USD * curs_valutar[moneda_principala].RON;
-		val_convertit.EUR = val.USD * curs_valutar[moneda_principala].EUR;
-		val_convertit.GBP = val.USD * curs_valutar[moneda_principala].GBP;
-		break;
-	case GBP:
-
-		val_convertit.GBP = val.GBP;
-		val_convertit.RON = val.GBP * curs_valutar[moneda_principala].RON;
-		val_convertit.EUR = val.GBP * curs_valutar[moneda_principala].EUR;
-		val_convertit.USD = val.GBP * curs_valutar[moneda_principala].USD;
-		break;
-	default:
-		printf("Problema la convertirea valutei! (p_switch");
-		exit(4);
-	}
-
-	return val_convertit;
 }
 
-float convertire_valuta_f(VALUTA* curs_valutar, float val, MONEDA moneda_in, MONEDA moneda_out){
+float convertire_valuta_f(const CURS curs, const float val, const MONEDA moneda_in, const MONEDA moneda_out)
+{
 	float val_conv;
-
-	switch(moneda_out){
-	case RON:
-		val_conv = val * curs_valutar[moneda_in].RON;
-		break;
-	case EUR:
-		val_conv = val * curs_valutar[moneda_in].EUR;
-		break;
-	case USD:
-		val_conv = val * curs_valutar[moneda_in].USD;
-		break;
-	case GBP:
-		val_conv = val * curs_valutar[moneda_in].GBP;
-		break;
-	default:
-		printf("Problema la convertirea valutei! (f_switch");
-		exit(5);
-	}
-
+	val_conv = val * curs[moneda_in][moneda_out];
 	return val_conv;
 }
-
