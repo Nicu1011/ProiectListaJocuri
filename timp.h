@@ -3,7 +3,9 @@
 
 
 #define FORMAT_ORA "%02d_%02d_%02d"
+#define FORMAT_ORA_N 8
 #define FORMAT_DATA "%02d-%02d-%4d"
+#define FORMAT_DATA_N 10
 
 char* creaza_timestamp_data(const char* format);
 char* creaza_timestamp_ora(const char* format);

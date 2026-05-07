@@ -2,7 +2,7 @@
 Proiect inceput pe 07.04.2026
 Total timp pierdut p'aici: ~15h
 */
-
+#include <string.h>
 #include <stdio.h>
 #include "joc.h"
 #include "timp.h"
@@ -32,22 +32,33 @@ Total timp pierdut p'aici: ~15h
 
 int main()
 {
-	LISTAJOC lista_joc = fcitire_lista_jocuri(NULL);
-	CURS curs;
-	fcitire_curs_valutar(NULL, curs);
+	NODJOC* start = NULL;
 
-	for(int i=0; i<NR_MONEDE; i++)
-	{
-		for(int j=0; j<NR_MONEDE; j++)
-			printf("%6.2f ", (float)curs[i][j]);
-		printf("\n");
-		fflush(stdout);
-	}
+	JOCVIDEO joc = {"ELDEN2"};
 
-	fcreare_lista_jocuri("test.txt", lista_joc);
+	insert(&start, joc);
+	printf("\nN: %d ; ", get_num(start));
 
-	printf("%s_%s", creaza_timestamp_data(FORMAT_DATA), creaza_timestamp_ora(FORMAT_ORA));
+	joc = (JOCVIDEO){"ELDEN1"};
 
-	printf("\n%d", f_citire_nr_linii(0));
+	insert(&start, joc);
+	printf("\nN: %d ; ", get_num(start));
+
+	joc = (JOCVIDEO){"ELDEN3"};
+	insert_at(&start, joc, 2);
+	printf("\nN: %d ; ", get_num(start));
+
+	delete_at(&start, 1);//ELDEN2 -> sters
+	printf("\nN: %d ; ", get_num(start));
+
+	joc = (JOCVIDEO){"ELDENSET"};
+	set_at(&start,joc,2);
+	printf("\nN: %d ; \n", get_num(start));
+
+	afisare(start);
+	printf("\n");
+	afisare_inv(start);
+
+	free_lista(&start);
     return 0;
 }

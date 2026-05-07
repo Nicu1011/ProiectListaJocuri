@@ -4,7 +4,7 @@ BUTON btn = {100, 100, 100, 100, 0};
 
 void display()
 {
-
+	int a;
 }
 
 void mouse(int button, int state, int x, int y)

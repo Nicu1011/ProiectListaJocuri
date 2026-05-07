@@ -32,7 +32,6 @@ void convertire_valuta_v(const CURS curs, const VALUTA val, VALUTA val_conv, con
 {
 	for(int i=0; i<NR_MONEDE; i++)
 		val_conv[i] = val[i] * curs[moneda_principala][i];
-
 }
 
 float convertire_valuta_f(const CURS curs, const float val, const MONEDA moneda_in, const MONEDA moneda_out)

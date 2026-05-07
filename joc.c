@@ -1,113 +1,181 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "joc.h"
 
-int f_citire_nr_linii(const char* nume_fisier)
+void insert(NODJOC** start, JOCVIDEO joc)
 {
-	if(!nume_fisier)
-		return 0;
+	NODJOC* temp = (NODJOC*)malloc(sizeof(NODJOC));
+	temp->joc = joc;
+	temp->next = *start;
+	temp->prev = NULL;
 
-	int n = 0;
+	if(*start != NULL)
+		(*start)->prev = temp;
 
-	FILE* fin = fopen(nume_fisier, "r");
-	if(!fin)
+	*start = temp;
+}
+
+void insert_at(NODJOC** start, const JOCVIDEO joc, const int at_index)
+{
+	if(at_index < 0)
+		return ;
+
+	NODJOC* curent = *start;
+	int i;
+
+	if(at_index==0)//caz special
 	{
-		printf("Eroare la deschiderea fisierului pentru a citi nr de linii!");
-		exit(5);
+		insert(start, joc);
+		return ;
 	}
-	fseek(fin, 0, SEEK_SET);
 
-	int c;
+	for(i=0; i<at_index-1; i++)
+	{
+		curent = curent->next;
+		if(curent == NULL)//index invalid
+			return ;
+	}
 
-	while((c = fgetc(fin)) != EOF)
-		if(c == '\n')
-			n++;
+	NODJOC* temp = (NODJOC*)malloc(sizeof(NODJOC));
+	temp->joc = joc;
 
-	if(c == EOF)
+	temp->next = curent->next;
+	temp->prev = curent;
+
+	if(curent->next != NULL)
+		curent->next->prev = temp;
+
+	curent->next = temp;
+}
+
+void delete_at(NODJOC** start, const int at_index)
+{
+	if(at_index < 0)
+		return ;
+
+	NODJOC* curent = *start;
+	int i;
+
+	for(i=0; i<at_index; i++)
+	{
+		curent = curent->next;
+		if(curent == NULL)//index invalid
+			return ;
+	}
+
+	if(curent->prev != NULL)
+		curent->prev->next = curent->next;
+	else
+		*start = curent->next;
+
+	if(curent->next != NULL)
+		curent->next->prev = curent->prev;
+
+	free(curent);
+}
+
+void afisare(NODJOC* start)
+{
+	NODJOC* curent = start;
+	if(curent == NULL)
+		return ;
+
+	while(curent!=NULL)
+	{
+		printf("%s ", curent->joc.nume);
+		curent = curent->next;
+	}
+}
+
+void afisare_inv(NODJOC* start)
+{
+	NODJOC* curent = start;
+	if(curent == NULL)
+		return ;
+
+	while(curent->next!=NULL)
+		curent = curent->next;
+
+	while(curent!=NULL)
+	{
+		printf("%s ", curent->joc.nume);
+		curent = curent->prev;
+	}
+}
+
+JOCVIDEO* pget_at(NODJOC* start, const int at_index)
+{
+	if(at_index < 0)
+		return NULL;
+
+	NODJOC* curent = start;
+
+	int i;
+	for(i=0; i<at_index; i++)
+	{
+		curent = curent->next;
+		if(curent == NULL)//index invalid
+			return NULL;
+	}
+
+	return &curent->joc;
+}
+JOCVIDEO get_at(NODJOC* start, const int at_index)
+{
+	JOCVIDEO nimic = {0};
+
+	if(at_index < 0)
+		return nimic;
+
+	int i;
+	NODJOC* curent = start;
+	for(i=0; i<at_index; i++)
+	{
+		curent = curent->next;
+		if(curent == NULL)//index invalid
+			return nimic;
+	}
+
+	return curent->joc;
+}
+void set_at(NODJOC** start, JOCVIDEO joc, const int at_index)
+{
+	if(at_index < 0)
+		return ;
+
+	int i;
+	NODJOC* curent = *start;
+	for(i=0; i<at_index; i++)
+	{
+		curent = curent->next;
+		if(curent == NULL)//index invalid
+			return ;
+	}
+	curent->joc = joc;
+}
+int get_num(NODJOC* start)
+{
+	int n=0;
+
+	NODJOC* curent = start;
+
+	while(curent!=NULL)
+	{
 		n++;
-
-	fclose(fin);
+		curent=curent->next;
+	}
 
 	return n;
 }
-
-LISTAJOC fcitire_lista_jocuri(const char* nume_fisier)
+void free_lista(NODJOC** start)
 {
-	if(!nume_fisier)
-		nume_fisier = "lista_jocuri_default.txt";
+	NODJOC* temp;
+	NODJOC* curent = *start;
 
-	int i = 0, j;
-	LISTAJOC lista = {0};
-
-	lista.n = f_citire_nr_linii(nume_fisier);
-	JOCVIDEO* lista_jocuri = (JOCVIDEO*)malloc(sizeof(JOCVIDEO) * lista.n);
-
-	FILE* fin = fopen(nume_fisier, "r");
-	if(!fin){
-		printf("Eroare la citirea listei pentru jocuri! (fisier)\n");
-		fflush(stdout);
-		exit(2);
-	}
-
-	while(feof(fin) == 0){
-
-		fscanf(fin, FORMAT_LISTA_R, lista_jocuri[i].nume, lista_jocuri[i].dezvoltator, lista_jocuri[i].publicant,
-				&lista_jocuri[i].favorit, &lista_jocuri[i].clasament, &lista_jocuri[i].nota,
-				&lista_jocuri[i].data_lansare.zi, &lista_jocuri[i].data_lansare.luna, &lista_jocuri[i].data_lansare.an,
-				&lista_jocuri[i].data_primu_joc.zi, &lista_jocuri[i].data_primu_joc.luna, &lista_jocuri[i].data_primu_joc.an,
-				&lista_jocuri[i].data_ultim_joc.zi, &lista_jocuri[i].data_ultim_joc.luna, &lista_jocuri[i].data_ultim_joc.an,
-				&lista_jocuri[i].timp_jucat.ore, &lista_jocuri[i].timp_jucat.min, &lista_jocuri[i].timp_jucat.sec,
-				&lista_jocuri[i].spatiu_necesar, &lista_jocuri[i].pret[EUR]
-				);
-		for(j = 0; j < NR_TAGURI; j++)
-				fscanf(fin, FORMAT_TAG, &lista_jocuri[i].taguri[j]);
-		i++;
-	}
-
-	lista.jocuri = lista_jocuri;
-	lista.n = i;
-
-	fclose(fin);
-	return lista;
-}
-
-void fcreare_lista_jocuri(const char* nume_fisier, const LISTAJOC lista)
-{
-	int i, j;
-	int n = lista.n;
-	JOCVIDEO* lista_jocuri = lista.jocuri;
-
-	FILE* fout = fopen(nume_fisier, "w");
-	if(!fout){
-		printf("Eroare la crearea listei pentru jocuri! (fisier)\n");
-		fflush(stdout);
-		exit(3);
-	}
-
-	for(i = 0; i < n; i++)
+	while(curent!=NULL)
 	{
-		fprintf(fout, FORMAT_LISTA_W,
-				lista_jocuri[i].nume, lista_jocuri[i].dezvoltator, lista_jocuri[i].publicant,
-				lista_jocuri[i].favorit, lista_jocuri[i].clasament, lista_jocuri[i].nota,
-				lista_jocuri[i].data_lansare.zi, lista_jocuri[i].data_lansare.luna, lista_jocuri[i].data_lansare.an,
-				lista_jocuri[i].data_primu_joc.zi, lista_jocuri[i].data_primu_joc.luna, lista_jocuri[i].data_primu_joc.an,
-				lista_jocuri[i].data_ultim_joc.zi, lista_jocuri[i].data_ultim_joc.luna, lista_jocuri[i].data_ultim_joc.an,
-				lista_jocuri[i].timp_jucat.ore, lista_jocuri[i].timp_jucat.min, lista_jocuri[i].timp_jucat.sec,
-				lista_jocuri[i].spatiu_necesar, lista_jocuri[i].pret[EUR]
-				);
-
-		for(j = 0; j < NR_TAGURI; j++)
-			fprintf(fout, FORMAT_TAG, lista_jocuri[i].taguri[j]);
-		if(i+1 < n)
-			fprintf(fout, "\n");
+		temp = curent;
+		curent = curent->next;
+		free(temp);
 	}
 
-	fclose(fout);
-}
-
-void eliberare_lista_jocuri(LISTAJOC lista)
-{
-	free(lista.jocuri);
-	lista.n = 0;
+	*start = NULL;
 }

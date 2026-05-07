@@ -1,7 +1,11 @@
 #ifndef JOC_H_
 #define JOC_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "valuta.h"
+#include "timp.h"
 #include "tag.h"
 
 #define FORMAT_LISTA_R "%49s %49s %49s %d %d %d %d-%d-%d %d-%d-%d %d-%d-%d %d_%d_%d %f %f "
@@ -25,8 +29,7 @@ typedef struct{
 typedef struct{
 	char nume[50];
 	char dezvoltator[50], publicant[50];
-	int taguri[NR_TAGURI];//index -> ENUM cu indexul tagului
-	// valoare in sine e 0 daca nu are tag si 1 daca are acel tag
+	int taguri[NR_TAGURI];
 
 	int favorit;
 	int clasament;
@@ -41,20 +44,25 @@ typedef struct{
 
 } JOCVIDEO;
 
-typedef struct{
-	JOCVIDEO* jocuri;
-	int n;
-} LISTAJOC;
+struct nodjoc{
+	JOCVIDEO joc;
+	struct nodjoc* next;
+	struct nodjoc* prev;
+};
+typedef struct nodjoc NODJOC;
 
-int f_citire_nr_linii(const char* nume_fisier);
+//functii lista
+void insert(NODJOC** start, JOCVIDEO joc);
+void insert_at(NODJOC** start, const JOCVIDEO joc, const int at_index);
+void delete_at(NODJOC** start, const int at_index);
+void afisare(NODJOC* start);
+void afisare_inv(NODJOC* start);
+JOCVIDEO* pget_at(NODJOC* start, const int at_index);
+JOCVIDEO get_at(NODJOC* start, const int at_index);
+void set_at(NODJOC** start, JOCVIDEO joc, const int at_index);
+int get_num(NODJOC* start);
+void free_lista(NODJOC** start);
 
-LISTAJOC fcitire_lista_jocuri(const char* nume_fisier);
-//citeste un fisier cu numele 'nume_fisier' si returneaza un pointer catre un vector de JOCVIDEO
-//de asemenea salveaza si in n_list cate valori a gasit in fisier
-void fcreare_lista_jocuri(const char* nume_fisier, const LISTAJOC lista);
-//creaza un fisier cu numele 'nume_fisier'
-void eliberare_lista_jocuri(LISTAJOC lista);
-
-LISTAJOC calc_pret_timp(LISTAJOC lista);
-//calculeaza pretul pe timpul jucat si returneaza lista rezultat;
+//functii pentru fisiere
+void creaza_fisier(NODJOC** start);
 #endif /* JOC_H_ */
