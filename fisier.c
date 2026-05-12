@@ -5,7 +5,7 @@ void creaza_fisier(NODJOC* start, const char* nume_fisier)
 	if(start == NULL)
 		return ;
 	if(nume_fisier == NULL)
-		nume_fisier = "test.txt";
+		nume_fisier = "lista_jocuri_default.txt";
 
 	FILE* file = fopen(nume_fisier, "w");
 	if(!file)
@@ -90,6 +90,8 @@ void citeste_fisier(NODJOC** start, const char* nume_fisier)
 
 		for(int tag=0; tag<NR_TAGURI; tag++)
 			fscanf(file, FORMAT_TAG, &joc.taguri[tag]);
+
+
 
 		insert_at(start, joc, i);
 		i++;

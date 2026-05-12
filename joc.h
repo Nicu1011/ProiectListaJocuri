@@ -14,6 +14,24 @@
 #define FORMAT_TAG "%d "
 #define FORMAT_TAGLAST "%d"
 
+typedef enum{
+	NUME,
+	DEZVOLTATOR,
+	PUBLICANT,
+	FAVORIT,
+	CLASAMENT,
+	NOTA,
+	DATA_LANSARE,
+	DATA_PRIMU_JOC,
+	DATA_ULTIM_JOC,
+	TIMPJUCAT,
+	SPATIU_NECESAR,
+	PRET,
+
+	NR_PARAMETRI
+} PARAMETRIJOC;
+extern const char* NUMEPARAMETRI[NR_PARAMETRI];
+
 struct timp{
 	int ore;
 	int min;

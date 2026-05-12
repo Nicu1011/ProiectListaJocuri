@@ -1,5 +1,20 @@
 #include "joc.h"
 
+const char* NUMEPARAMETRI[NR_PARAMETRI] = {
+		"Nume",
+		"Dezvoltator",
+		"Publicant",
+		"Favorit",
+		"Clasament",
+		"Nota",
+		"Data Lansare (dd-mm-yyyy)",
+		"Data Primului joc (dd-mm-yyyy)",
+		"Data Ultimului joc (dd-mm-yyyy)",
+		"Timp Jucat (hhhh_mm_ss)",
+		"Spatiu Necesar (GB)",
+		"Pret (EUR)",
+};
+
 void insert(NODJOC** start, const JOCVIDEO joc)
 {
 	NODJOC* temp = (NODJOC*)malloc(sizeof(NODJOC));

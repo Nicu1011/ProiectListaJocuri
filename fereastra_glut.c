@@ -1,34 +1,36 @@
 #include "fereastra_glut.h"
 
+int fereastra_main = -1;
+int fereastra_add = -1;
+
 NODJOC* lista = NULL;
 JOCROW* table = NULL;
 int count;
-int selectedRow = -1;
 
 int scrollY = 0;
 
+//toast
 char textToast[32];
 int visibil;
 int start;
 int duration;
 
-
-void drawText(int x, int y, const char* text)
+void drawText(int x, int y, const char* text, int ignore_max_len)
 {
 	glRasterPos2i(x, y);
 	for(int i=0; text[i] != '\0'; i++)
 	{
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
-		if(i > MAX_DISPLAYTEXT_LEN)
-		{
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '.');
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '.');
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '.');
-			return;
-		}
+		if(ignore_max_len == 0)
+			if(i > MAX_DISPLAYTEXT_LEN && text[i+1] != '\0')
+			{
+				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '.');
+				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '.');
+				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, '.');
+				return;
+			}
 	}
 }
-
 void drawButton(BUTTON b)
 {
 	glBegin(GL_QUADS);
@@ -40,7 +42,10 @@ void drawButton(BUTTON b)
 	glEnd();
 
 	glColor3f(0.0f, 0.0f, 1.0f);
-	drawText(b.x + (b.width/2) + b.textXOffset, b.y+(b.height/2)+b.textYOffset, b.text);
+	drawText(b.x + (b.width/2) + b.textXOffset,
+			b.y + (b.height/2) + b.textYOffset,
+			b.text,
+			1);
 }
 void drawTable(JOCROW* rows, int count)
 {
@@ -77,23 +82,54 @@ void drawRow(JOCROW row)
 
 
 	//text
-	glColor3f(0.0f, 0.0f, 1.0f);
+	glColor3f(0.0f, 0.0f, 0.0f);
 
 	char n_str[25];
 	int_to_text(row.joc->clasament, n_str);
-	drawText(row.x + row.textXOffset + CLASAMENT_XOFFSET, y + row.textYOffset, n_str);
+	drawText(row.x + row.textXOffset + CLASAMENT_XOFFSET,
+			y + row.textYOffset,
+			n_str,
+			0);
 
-	drawText(row.x + row.textXOffset + NUME_XOFFSET, y + row.textYOffset, row.joc->nume);
+	drawText(row.x + row.textXOffset + NUME_XOFFSET,
+			y + row.textYOffset,
+			row.joc->nume
+			,0);
 
 	char timp_str[100];
-	sprintf(timp_str, "%d:%02d:%02d", row.joc->timp_jucat.ore, row.joc->timp_jucat.min, row.joc->timp_jucat.sec);
-	drawText(row.x + row.textXOffset + TIMP_XOFFSET, y + row.textYOffset, timp_str);
+	sprintf(timp_str, "%d:%02d:%02d",
+			row.joc->timp_jucat.ore,
+			row.joc->timp_jucat.min,
+			row.joc->timp_jucat.sec);
+	drawText(row.x + row.textXOffset + TIMP_XOFFSET,
+			y + row.textYOffset,
+			timp_str,
+			0);
 
 	char f_str[25];
 	float_to_text(row.joc->pret[EUR], 2, f_str);
-	drawText(row.x + row.textXOffset + PRET_XOFFSET, y + row.textYOffset, f_str);
+	strcat(f_str, "EUR");
+	drawText(row.x + row.textXOffset + PRET_XOFFSET,
+			y + row.textYOffset,
+			f_str,
+			0);
 
-	drawText(row.x + row.textXOffset + FAV_XOFFSET, y + row.textYOffset, (row.joc->favorit == 1)?"F":"x");
+	if(row.joc->favorit == 1)
+	{
+		glColor3f(1.0f, 0.0f, 0.0f);
+		drawText(row.x + row.textXOffset + FAV_XOFFSET,
+				y + row.textYOffset,
+				"F",
+				0);
+	}
+	else
+	{
+		glColor3f(0.0f, 0.0f, 0.0f);
+		drawText(row.x + row.textXOffset + FAV_XOFFSET,
+				y + row.textYOffset,
+				"x",
+				0);
+	}
 }
 void drawToast()
 {
@@ -122,7 +158,7 @@ void drawToast()
 	glEnd();
 
 	glColor3f(0.0f, 0.0f, 0.0f);
-	drawText(x+width/3, y+height/2, textToast);
+	drawText(x+width/3, y+height/2, textToast, 1);
 }
 void setToast(const char* text, int timp)
 {
@@ -130,8 +166,44 @@ void setToast(const char* text, int timp)
 	visibil = 1;
 	start = glutGet(GLUT_ELAPSED_TIME);
 	duration = timp;
-	glutPostRedisplay();
 }
+
+void makeglut(int* argc, char** argv)
+{
+	free_lista(&lista);
+	free(table);
+
+	citeste_fisier(&lista, NULL);
+
+	count = get_num(lista);
+	table = (JOCROW*)malloc(sizeof(JOCROW) * count);
+	formeaza_table(table, lista);
+
+	glutInit(argc, argv);
+	glutInitWindowSize(WINDOW_W, WINDOW_H);
+	glutInitWindowPosition((SCREEN_W - WINDOW_W)/2, (SCREEN_H - WINDOW_H)/2);
+	fereastra_main = glutCreateWindow("Lista Jocuri Video");
+
+	glutSetWindow(fereastra_main);
+
+	//schimbare la proiectie
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+	gluOrtho2D(0, WINDOW_W, 0, WINDOW_H);
+
+	//schimbare la modele
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+	glClearColor(0.9f, 0.9f, 1.0f, 1.0f);
+	glutDisplayFunc(display);
+	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(special);
+	glutReshapeFunc(resize);
+	glutTimerFunc(REFRESH_MS, timer, 0);
+
+}
+
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -141,7 +213,6 @@ void display()
 
 	glFlush();
 }
-
 void keyboard(unsigned char key, int x, int y)
 {
 	if(key == KEY_ESC)
@@ -157,7 +228,17 @@ void keyboard(unsigned char key, int x, int y)
 
 		table = (JOCROW*)malloc(sizeof(JOCROW) * count);
 		formeaza_table(table, lista);
-		setToast("LOADED", 1000);
+		setToast("LOADED lista_jocuri_default.txt", 1000);
+	}
+	if(key == KEY_SAVE)
+	{
+		creaza_fisier(lista, NULL);
+		setToast("SAVED lista_jocuri_default.txt", 1000);
+	}
+	if(key == 't')
+	{
+		if(fereastra_add == -1)
+			makeglut_add();
 	}
 	if(key == '1')
 		sortare(&lista, cmp_nume);
@@ -191,53 +272,74 @@ void resize(int width, int height)
 	if(width != WINDOW_W || height != WINDOW_H)
         glutReshapeWindow(WINDOW_W, WINDOW_H);
 }
-
 void timer(int time)
 {
 	glutPostRedisplay();
 	glutTimerFunc(REFRESH_MS, timer, 0);
 }
 
-void makeglut(int* argc, char** argv)
+//FEREASTRA PENTRU ADAUGARE
+void makeglut_add()
 {
-	free_lista(&lista);
-	free(table);
+	glutInitWindowSize(ADD_W, ADD_H);
+	glutInitWindowPosition((SCREEN_W - ADD_W)/2, (SCREEN_H - ADD_H)/2);
+	fereastra_add = glutCreateWindow("Adauga Joc");
 
-	citeste_fisier(&lista, NULL);
+	glutSetWindow(fereastra_add);
 
-	count = get_num(lista);
-	table = (JOCROW*)malloc(sizeof(JOCROW) * count);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, ADD_W, 0, ADD_H);
 
-	formeaza_table(table, lista);
-
-	glutInit(argc, argv);
-	glutInitWindowSize(WINDOW_W, WINDOW_H);
-	glutInitWindowPosition((SCREEN_W - WINDOW_W)/2, (SCREEN_H - WINDOW_H)/2);
-	glutCreateWindow("Lista Jocuri Video");
-
-	//schimbare la proiectie
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-	gluOrtho2D(0, WINDOW_W, 0, WINDOW_H);
-
-	//schimbare la modele
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	glClearColor(0.9f, 0.9f, 1.0f, 1.0f);
-	glutDisplayFunc(display);
-	glutReshapeFunc(resize);
-	glutKeyboardFunc(keyboard);
-	glutSpecialFunc(special);
-	glutTimerFunc(REFRESH_MS, timer, 0);
 
+	glutDisplayFunc(display_add);
+	glutKeyboardFunc(keyboard_add);
+	glutReshapeFunc(resize_add);
+	glutTimerFunc(REFRESH_MS, timer_add, 0);
 }
+void display_add()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+
+	int i, offsetY;
+	for(i = 0, offsetY = 25; i<NR_PARAMETRI; i++, offsetY += 25)
+		drawText(15, ADD_H - offsetY , NUMEPARAMETRI[i], 1);
+
+	glFlush();
+}
+void keyboard_add(unsigned char key, int x, int y)
+{
+	if(key == KEY_ESC)
+	{
+		glutDestroyWindow(fereastra_add);
+		fereastra_add = -1;
+		glutSetWindow(fereastra_main);
+		return;
+	}
+}
+void resize_add(int width, int height)
+{
+	if(width != ADD_W || height != ADD_H)
+		glutReshapeWindow(ADD_W, ADD_H);
+}
+void timer_add(int time)
+{
+	glutPostRedisplay();
+	glutTimerFunc(REFRESH_MS, timer_add, 0);
+}
+
+
+
 void formeaza_table(JOCROW* table, NODJOC* lista)
 {
 	if(lista == NULL || table == NULL)
 		return;
-
-//	int count = get_num(lista);
 
 	NODJOC* curent = lista;
 	int i = 0, x = 0, y = WINDOW_H;
@@ -261,4 +363,3 @@ void formeaza_table(JOCROW* table, NODJOC* lista)
 		i++;
 	}
 }
-
