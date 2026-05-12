@@ -1,24 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
 #include "timp.h"
 
-char* creaza_timestamp_data(const char* format)
+void creaza_timestamp_data(char* timestamp, size_t n, const char* format)
 {
-	char* str_data = (char*)malloc(sizeof(char) * FORMAT_DATA_N);
 	time_t timp = time(NULL);
 	struct tm *timp_local = localtime(&timp);
 
-	sprintf(str_data , format, timp_local->tm_mday, timp_local->tm_mon + 1, timp_local->tm_year + 1900);
-	return str_data;
+	snprintf(timestamp, n, format,
+			timp_local->tm_mday,
+			timp_local->tm_mon + 1,
+			timp_local->tm_year + 1900);
 }
-char* creaza_timestamp_ora(const char* format)
+void creaza_timestamp_ora(char* timestamp, size_t n, const char* format)
 {
-	char* str_ora = (char*)malloc(sizeof(char) * FORMAT_ORA_N);
 	time_t timp = time(NULL);
 	struct tm *timp_local = localtime(&timp);
 
-	sprintf(str_ora , FORMAT_ORA, timp_local->tm_hour, timp_local->tm_min, timp_local->tm_sec);
-	return str_ora;
+	snprintf(timestamp, n, format,
+				timp_local->tm_hour,
+				timp_local->tm_min,
+				timp_local->tm_sec);
 }

@@ -1,6 +1,6 @@
 #include "joc.h"
 
-void insert(NODJOC** start, JOCVIDEO joc)
+void insert(NODJOC** start, const JOCVIDEO joc)
 {
 	NODJOC* temp = (NODJOC*)malloc(sizeof(NODJOC));
 	temp->joc = joc;
@@ -87,9 +87,10 @@ void afisare(NODJOC* start)
 
 void afisare_inv(NODJOC* start)
 {
-	NODJOC* curent = start;
-	if(curent == NULL)
+	if(start == NULL)
 		return ;
+
+	NODJOC* curent = start;
 
 	while(curent->next!=NULL)
 		curent = curent->next;
@@ -99,6 +100,18 @@ void afisare_inv(NODJOC* start)
 		printf("%s ", curent->joc.nume);
 		curent = curent->prev;
 	}
+}
+
+NODJOC* nodget_last(NODJOC* start)
+{
+	if(start == NULL)
+		return NULL;
+
+	NODJOC* curent = start;
+	while(curent->next!=NULL)
+		curent = curent->next;
+
+	return curent;
 }
 
 JOCVIDEO* pget_at(NODJOC* start, const int at_index)
@@ -136,6 +149,7 @@ JOCVIDEO get_at(NODJOC* start, const int at_index)
 
 	return curent->joc;
 }
+
 void set_at(NODJOC** start, JOCVIDEO joc, const int at_index)
 {
 	if(at_index < 0)
@@ -153,17 +167,17 @@ void set_at(NODJOC** start, JOCVIDEO joc, const int at_index)
 }
 int get_num(NODJOC* start)
 {
-	int n=0;
+	int i=0;
 
 	NODJOC* curent = start;
 
 	while(curent!=NULL)
 	{
-		n++;
+		i++;
 		curent=curent->next;
 	}
 
-	return n;
+	return i;
 }
 void free_lista(NODJOC** start)
 {
@@ -178,4 +192,116 @@ void free_lista(NODJOC** start)
 	}
 
 	*start = NULL;
+}
+
+void sortare(NODJOC** start, int (*cmp)(JOCVIDEO, JOCVIDEO))
+{
+	NODJOC* nod1;
+	NODJOC* nod2;
+	for(nod1 = *start; nod1->next != NULL; nod1=nod1->next)
+	{
+		for(nod2 = nod1->next; nod2 != NULL; nod2=nod2->next)
+		{
+			if( cmp(nod1->joc, nod2->joc) > 0)
+				swap_joc(&nod1->joc, &nod2->joc);
+		}
+	}
+}
+void swap_joc(JOCVIDEO* j1, JOCVIDEO* j2)
+{
+	JOCVIDEO temp = *j1;
+	*j1 = *j2;
+	*j2 = temp;
+}
+int cmp_nume(JOCVIDEO j1, JOCVIDEO j2)
+{
+	return strcmp(j1.nume, j2.nume);
+}
+int cmp_fav(JOCVIDEO j1, JOCVIDEO j2)
+{
+	return j2.favorit - j1.favorit;
+}
+int cmp_nota(JOCVIDEO j1, JOCVIDEO j2)
+{
+	return j2.nota - j1.nota;
+}
+int cmp_clasament(JOCVIDEO j1, JOCVIDEO j2)
+{
+	return j1.clasament - j2.clasament;
+}
+int cmp_timpjucat(JOCVIDEO j1, JOCVIDEO j2)
+{
+	if(j1.timp_jucat.ore != j2.timp_jucat.ore)
+		return j2.timp_jucat.ore - j1.timp_jucat.ore;
+	if(j1.timp_jucat.min != j2.timp_jucat.min)
+		return j2.timp_jucat.min - j1.timp_jucat.min;
+	return j2.timp_jucat.sec - j1.timp_jucat.sec;
+}
+
+void swap_char(char* c1, char* c2)
+{
+	char aux = *c1;
+	*c1 = *c2;
+	*c2 = aux;
+}
+
+void int_to_text(const int n, char* text)
+{
+	int i = 0, aux = n;
+	if(n < 0)
+	{
+		aux = -n;
+		text[i++] = '-';
+	}
+	do
+	{
+		text[i++] = '0' + aux%10;
+		aux /= 10;
+	} while(aux != 0);
+	text[i] = '\0';
+
+	int start = (n < 0)? 1: 0;
+	int end = i-1;
+	while(start < end)
+	{
+		swap_char(&text[start], &text[end]);
+		start++;
+		end--;
+	}
+}
+void float_to_text(float n, int decimale, char* text)
+{
+	int i = 0;
+	if(n < 0)
+	{
+		n = -n;
+		text[i++] = '-';
+	}
+	int intreg = (int)n;
+
+	char temp[100];
+	int_to_text(intreg, temp);
+
+	int j = 0;
+	while(temp[j] != '\0')
+		text[i++] = temp[j++];
+
+	if(decimale == 0)
+	{
+		text[i++] = '\0';
+		return ;
+	}
+
+	int zecimal = (int)((n - intreg) * (float)pow(10, decimale));
+	int zero = (zecimal == 0)? 1: (int)log10(zecimal) + 1;
+	text[i++] = '.';
+	for(j = zero; j < decimale; j++)
+		text[i++] = '0';
+
+	int_to_text(zecimal, temp);
+	j = 0;
+	while(temp[j] != '\0')
+		text[i++] = temp[j++];
+
+	text[i] = '\0';
 }

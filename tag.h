@@ -27,4 +27,5 @@ typedef enum{
 } TAGURIJOC;
 extern const char* NUMETAG[NR_TAGURI];
 
+
 #endif /* TAG_H_ */
