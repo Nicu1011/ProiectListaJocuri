@@ -9,11 +9,6 @@
 #include "valuta.h"
 #include "tag.h"
 
-#define FORMAT_LISTA_R "%49s %49s %49s %d %d %d %d-%d-%d %d-%d-%d %d-%d-%d %d_%d_%d %f %f "
-#define FORMAT_LISTA_W "%49s %49s %49s %1d %2d %2d %02d-%02d-%04d %02d-%02d-%04d %02d-%02d-%04d %04d_%02d_%02d %6.2f %6.2f "
-#define FORMAT_TAG "%d "
-#define FORMAT_TAGLAST "%d"
-
 typedef enum{
 	NUME,
 	DEZVOLTATOR,
@@ -60,7 +55,7 @@ struct jocvideo{
 
 	float spatiu_necesar; //GB
 
-	VALUTA pret, pret_timp_jucat;
+	float pret[NR_MONEDE], pret_timp_jucat[NR_MONEDE];
 
 };
 typedef struct jocvideo JOCVIDEO;
@@ -89,16 +84,16 @@ void free_lista(NODJOC** start);
 //functii pentru sortare
 void sortare(NODJOC** start, int (*f)(JOCVIDEO, JOCVIDEO));
 void swap_joc(JOCVIDEO* j1, JOCVIDEO* j2);
-int cmp_nume(JOCVIDEO j1, JOCVIDEO j2);
-int cmp_fav(JOCVIDEO j1, JOCVIDEO j2);
-int cmp_nota(JOCVIDEO j1, JOCVIDEO j2);
+
 int cmp_clasament(JOCVIDEO j1, JOCVIDEO j2);
+int cmp_nume(JOCVIDEO j1, JOCVIDEO j2);
+int cmp_favorit(JOCVIDEO j1, JOCVIDEO j2);
+int cmp_nota(JOCVIDEO j1, JOCVIDEO j2);
 int cmp_timpjucat(JOCVIDEO j1, JOCVIDEO j2);
+int cmp_pret(JOCVIDEO j1, JOCVIDEO j2);
 
 //functii diverse
-void swap_char(char* c1, char* c2);
-void int_to_text(const int n, char* text);
-void float_to_text(float n, const int zecimale, char* text);
-
+void text_to_int(const char* text, int* n);
+void text_to_float(const char* text, float* n);
 
 #endif /* JOC_H_ */

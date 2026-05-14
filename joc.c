@@ -1,18 +1,18 @@
 #include "joc.h"
 
 const char* NUMEPARAMETRI[NR_PARAMETRI] = {
-		"Nume",
-		"Dezvoltator",
-		"Publicant",
-		"Favorit",
-		"Clasament",
-		"Nota",
-		"Data Lansare (dd-mm-yyyy)",
-		"Data Primului joc (dd-mm-yyyy)",
-		"Data Ultimului joc (dd-mm-yyyy)",
-		"Timp Jucat (hhhh_mm_ss)",
-		"Spatiu Necesar (GB)",
-		"Pret (EUR)",
+		"Nume:",
+		"Dezvoltator:",
+		"Publicant:",
+		"Favorit:",
+		"Clasament:",
+		"Nota:",
+		"Data Lansare (dd-mm-yyyy):",
+		"Data Primului joc (dd-mm-yyyy):",
+		"Data Ultimului joc (dd-mm-yyyy):",
+		"Timp Jucat (hhhh_mm_ss):",
+		"Spatiu Necesar (GB):",
+		"Pret (EUR):",
 };
 
 void insert(NODJOC** start, const JOCVIDEO joc)
@@ -232,7 +232,7 @@ int cmp_nume(JOCVIDEO j1, JOCVIDEO j2)
 {
 	return strcmp(j1.nume, j2.nume);
 }
-int cmp_fav(JOCVIDEO j1, JOCVIDEO j2)
+int cmp_favorit(JOCVIDEO j1, JOCVIDEO j2)
 {
 	return j2.favorit - j1.favorit;
 }
@@ -253,70 +253,69 @@ int cmp_timpjucat(JOCVIDEO j1, JOCVIDEO j2)
 	return j2.timp_jucat.sec - j1.timp_jucat.sec;
 }
 
-void swap_char(char* c1, char* c2)
+int cmp_pret(JOCVIDEO j1, JOCVIDEO j2)
 {
-	char aux = *c1;
-	*c1 = *c2;
-	*c2 = aux;
+	return j1.pret[EUR] - j2.pret[EUR];
 }
 
-void int_to_text(const int n, char* text)
+void text_to_int(const char* text, int* n)
 {
-	int i = 0, aux = n;
-	if(n < 0)
-	{
-		aux = -n;
-		text[i++] = '-';
-	}
-	do
-	{
-		text[i++] = '0' + aux%10;
-		aux /= 10;
-	} while(aux != 0);
-	text[i] = '\0';
+	if(text == NULL)
+		return;
 
-	int start = (n < 0)? 1: 0;
-	int end = i-1;
-	while(start < end)
+	*n = 0;
+	int neg = (text[0] != '-')? 0: 1;
+	int i = neg;
+
+	while(text[i] != '\0' && (text[i] >= '0' && text[i] <= '9') && (i - neg) < 10) //10 - maxim int limit
 	{
-		swap_char(&text[start], &text[end]);
-		start++;
-		end--;
+		int cif = (int)text[i] - (int)'0';
+
+		if(neg == 1)
+			*n = *n * 10 - cif;
+		else
+			*n = *n * 10 + cif;
+		i++;
 	}
 }
-void float_to_text(float n, int decimale, char* text)
+void text_to_float(const char* text, float* n)
 {
-	int i = 0;
-	if(n < 0)
+	if(text == NULL)
+		return;
+
+	*n = 0;
+	int neg = (text[0] != '-')? 0: 1;
+	int i = neg;
+
+	while(text[i] != '\0' && text[i] != '.' && (text[i] >= '0' && text[i] <= '9'))
 	{
-		n = -n;
-		text[i++] = '-';
-	}
-	int intreg = (int)n;
+		int cif = (int)text[i] - (int)'0';
 
-	char temp[100];
-	int_to_text(intreg, temp);
-
-	int j = 0;
-	while(temp[j] != '\0')
-		text[i++] = temp[j++];
-
-	if(decimale == 0)
-	{
-		text[i++] = '\0';
-		return ;
+		if(neg == 1)
+			*n = *n * 10 - cif;
+		else
+			*n = *n * 10 + cif;
+		i++;
 	}
 
-	int zecimal = (int)((n - intreg) * (float)pow(10, decimale));
-	int zero = (zecimal == 0)? 1: (int)log10(zecimal) + 1;
-	text[i++] = '.';
-	for(j = zero; j < decimale; j++)
-		text[i++] = '0';
+	if(text[i] != '.')
+		return;
 
-	int_to_text(zecimal, temp);
-	j = 0;
-	while(temp[j] != '\0')
-		text[i++] = temp[j++];
+	i++;
+	float zecimal = 0.0;
+	float factor = 0.1;
+	while(text[i] != '\0' && (text[i] >= '0' && text[i] <= '9'))
+	{
+		int cif = (int)text[i] - (int)'0';
 
-	text[i] = '\0';
+		zecimal += cif * factor;
+		factor *= 0.1;
+
+		i++;
+	}
+
+	if(neg == 0)
+		*n += zecimal;
+	else
+		*n -= zecimal;
 }

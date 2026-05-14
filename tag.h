@@ -2,6 +2,9 @@
 #define TAG_H_
 
 
+#define FORMAT_TAG "%d "
+#define FORMAT_TAGLAST "%d"
+
 typedef enum{
 	SINGLEPLAYER,
 	MULTIPLAYER,

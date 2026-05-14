@@ -38,10 +38,10 @@ void creaza_fisier(NODJOC* start, const char* nume_fisier)
 		for(int tag=0; tag<NR_TAGURI; tag++)
 		{
 			if(tag+1 < NR_TAGURI)
-				fprintf(file, FORMAT_TAG, curent->joc.taguri[tag]);
+				fprintf(file, "%d ", curent->joc.taguri[tag]);
 			else
 			{
-				fprintf(file, FORMAT_TAGLAST, curent->joc.taguri[tag]);
+				fprintf(file, "%d", curent->joc.taguri[tag]);
 
 				if(curent->next != NULL)
 					fprintf(file, "\n");
@@ -64,34 +64,34 @@ void citeste_fisier(NODJOC** start, const char* nume_fisier)
 	JOCVIDEO joc;
 
 	int i=0;
-	while(feof(file) == 0)
+	while(fscanf(file, FORMAT_LISTA_R,
+    		joc.nume,
+			joc.dezvoltator,
+			joc.publicant,
+			&joc.favorit,
+			&joc.clasament,
+			&joc.nota,
+			&joc.data_lansare.zi,
+			&joc.data_lansare.luna,
+			&joc.data_lansare.an,
+			&joc.data_primu_joc.zi,
+			&joc.data_primu_joc.luna,
+			&joc.data_primu_joc.an,
+			&joc.data_ultim_joc.zi,
+			&joc.data_ultim_joc.luna,
+			&joc.data_ultim_joc.an,
+			&joc.timp_jucat.ore,
+			&joc.timp_jucat.min,
+			&joc.timp_jucat.sec,
+			&joc.spatiu_necesar,
+			&joc.pret[EUR]) == 20)
 	{
-	    fscanf(file, FORMAT_LISTA_R,
-	    		joc.nume,
-				joc.dezvoltator,
-				joc.publicant,
-				&joc.favorit,
-				&joc.clasament,
-				&joc.nota,
-				&joc.data_lansare.zi,
-				&joc.data_lansare.luna,
-				&joc.data_lansare.an,
-				&joc.data_primu_joc.zi,
-				&joc.data_primu_joc.luna,
-				&joc.data_primu_joc.an,
-				&joc.data_ultim_joc.zi,
-				&joc.data_ultim_joc.luna,
-				&joc.data_ultim_joc.an,
-				&joc.timp_jucat.ore,
-				&joc.timp_jucat.min,
-				&joc.timp_jucat.sec,
-				&joc.spatiu_necesar,
-				&joc.pret[EUR]);
-
 		for(int tag=0; tag<NR_TAGURI; tag++)
-			fscanf(file, FORMAT_TAG, &joc.taguri[tag]);
-
-
+			if(fscanf(file, "%d", &joc.taguri[tag]) != 1)
+			{
+				fclose(file);
+				return;
+			}
 
 		insert_at(start, joc, i);
 		i++;

@@ -12,8 +12,8 @@
 
 #define WINDOW_W 620
 #define WINDOW_H 480
-#define ADD_W 520
-#define ADD_H 360
+#define ADD_W 480
+#define ADD_H 320
 
 #define SCREEN_W 1920
 #define SCREEN_H 1080
@@ -21,27 +21,31 @@
 #define KEY_ESC 27
 #define KEY_UP GLUT_KEY_UP
 #define KEY_DOWN GLUT_KEY_DOWN
-#define KEY_SELECT
-#define KEY_SAVE 's'
-#define KEY_LOAD 'l'
-#define KEY_BACKUP 'b'
-#define KEY_FAV 'f'
 
-#define SCROLL_SPEED ROW_HEIGHT/2
-#define REFRESH_MS 30 //15...16 -> 60fps, 32...33 -> 30 fps
+#define SCROLL_SPEED ROW_H
+#define REFRESH_MS 33 //16...17 -> 60fps, 33...34 -> 30 fps
 
-#define TOAST_WIDTH WINDOW_W
-#define TOAST_HEIGHT WINDOW_H/8
+#define TOAST_W WINDOW_W
+#define TOAST_H ROW_H*4
 
-#define ROW_WIDTH WINDOW_W
-#define ROW_HEIGHT WINDOW_H/16
+#define HEADER_W ROW_W
+#define HEADER_H ROW_H
+#define FOOTER_W ROW_W
+#define FOOTER_H ROW_H*4
+
+#define ROW_W WINDOW_W
+#define ROW_H WINDOW_H/16
+
+#define TEXT_XOFFSET 0
+#define TEXT_YOFFSET ROW_H/4
 
 #define CLASAMENT_XOFFSET 5
 #define NUME_XOFFSET WINDOW_W/15
 #define TIMP_XOFFSET WINDOW_W/2.5
 #define PRET_XOFFSET WINDOW_W/1.5
+#define NOTA_XOFFSET WINDOW_W - 75
 #define FAV_XOFFSET WINDOW_W - 25
-#define MAX_DISPLAYTEXT_LEN WINDOW_W/48
+#define MAX_DISPLAYTEXT_LEN WINDOW_W/45
 
 struct button{
 	int x, y;
@@ -57,14 +61,13 @@ struct jocrow{
 	int x, y;
 	int width, height;
 	int textXOffset, textYOffset;
-	int selectat;
 };
 typedef struct jocrow JOCROW;
 
 void drawText(int x, int y, const char* text, int ignore_max_len);
 void drawButton(BUTTON b);
 void drawTable(JOCROW rows[], int count);
-void drawRow(JOCROW row);
+void drawRow(JOCROW row, int selectat);
 void drawToast();
 void setToast(const char* text, int timp);
 void drawDetails();
@@ -85,5 +88,6 @@ void resize_add(int width, int height);
 void timer_add(int time);
 
 void formeaza_table(JOCROW* table, NODJOC* lista);
+
 
 #endif /* FEREASTRA_GLUT_H_ */
