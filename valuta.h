@@ -14,10 +14,10 @@ typedef enum {
 	NR_MONEDE
 } MONEDA;
 
-void fcitire_curs_valutar(const char* nume_fisier, float* curs[NR_MONEDE][NR_MONEDE]);
+extern const char* NUMEMONEDA[NR_MONEDE];
 
-void convertire_valuta_v(const float curs[NR_MONEDE][NR_MONEDE], const float val[NR_MONEDE], float* val_conv[NR_MONEDE], const MONEDA m_principal);
-float convertire_valuta_f(const float curs[NR_MONEDE][NR_MONEDE], const float val, const MONEDA moneda_in, const MONEDA moneda_out);
+void citeste_fisier_curs(float curs[NR_MONEDE][NR_MONEDE], const char* nume_fisier);
 
+void convertire_valuta(const float curs[NR_MONEDE][NR_MONEDE], float val[NR_MONEDE], const MONEDA moneda_principala);
 
 #endif /* VALUTA_H_ */

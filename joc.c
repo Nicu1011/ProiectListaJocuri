@@ -7,12 +7,13 @@ const char* NUMEPARAMETRI[NR_PARAMETRI] = {
 		"Favorit:",
 		"Clasament:",
 		"Nota:",
-		"Data Lansare (dd-mm-yyyy):",
-		"Data Primului joc (dd-mm-yyyy):",
-		"Data Ultimului joc (dd-mm-yyyy):",
+		"Lansare (dd-mm-yyyy):",
+		"Primu joc (dd-mm-yyyy):",
+		"Ultimu joc (dd-mm-yyyy):",
 		"Timp Jucat (hhhh_mm_ss):",
 		"Spatiu Necesar (GB):",
 		"Pret (EUR):",
+		"Taguri (ex: RPG,ACTION,PVP):"
 };
 
 void insert(NODJOC** start, const JOCVIDEO joc)
@@ -31,7 +32,7 @@ void insert(NODJOC** start, const JOCVIDEO joc)
 void insert_at(NODJOC** start, const JOCVIDEO joc, const int at_index)
 {
 	if(at_index < 0)
-		return ;
+		return;
 
 	NODJOC* curent = *start;
 	int i;
@@ -39,14 +40,14 @@ void insert_at(NODJOC** start, const JOCVIDEO joc, const int at_index)
 	if(at_index==0)//caz special
 	{
 		insert(start, joc);
-		return ;
+		return;
 	}
 
 	for(i=0; i<at_index-1; i++)
 	{
 		curent = curent->next;
 		if(curent == NULL)//index invalid
-			return ;
+			return;
 	}
 
 	NODJOC* temp = (NODJOC*)malloc(sizeof(NODJOC));
@@ -64,7 +65,7 @@ void insert_at(NODJOC** start, const JOCVIDEO joc, const int at_index)
 void delete_at(NODJOC** start, const int at_index)
 {
 	if(at_index < 0)
-		return ;
+		return;
 
 	NODJOC* curent = *start;
 	int i;
@@ -73,7 +74,7 @@ void delete_at(NODJOC** start, const int at_index)
 	{
 		curent = curent->next;
 		if(curent == NULL)//index invalid
-			return ;
+			return;
 	}
 
 	if(curent->prev != NULL)
@@ -89,9 +90,10 @@ void delete_at(NODJOC** start, const int at_index)
 
 void afisare(NODJOC* start)
 {
+	if(start == NULL)
+		return;
+
 	NODJOC* curent = start;
-	if(curent == NULL)
-		return ;
 
 	while(curent!=NULL)
 	{
@@ -103,7 +105,7 @@ void afisare(NODJOC* start)
 void afisare_inv(NODJOC* start)
 {
 	if(start == NULL)
-		return ;
+		return;
 
 	NODJOC* curent = start;
 
@@ -168,7 +170,7 @@ JOCVIDEO get_at(NODJOC* start, const int at_index)
 void set_at(NODJOC** start, JOCVIDEO joc, const int at_index)
 {
 	if(at_index < 0)
-		return ;
+		return;
 
 	int i;
 	NODJOC* curent = *start;
@@ -176,7 +178,7 @@ void set_at(NODJOC** start, JOCVIDEO joc, const int at_index)
 	{
 		curent = curent->next;
 		if(curent == NULL)//index invalid
-			return ;
+			return;
 	}
 	curent->joc = joc;
 }
@@ -234,7 +236,13 @@ int cmp_nume(JOCVIDEO j1, JOCVIDEO j2)
 }
 int cmp_favorit(JOCVIDEO j1, JOCVIDEO j2)
 {
-	return j2.favorit - j1.favorit;
+	if(j1.favorit == 1 && j2.favorit == 1)
+		return 0;
+	if(j1.favorit != 1 && j2.favorit == 1)
+		return 1;
+	if(j1.favorit == 1 && j2.favorit != 1)
+		return -1;
+	return 0;
 }
 int cmp_nota(JOCVIDEO j1, JOCVIDEO j2)
 {
@@ -252,70 +260,7 @@ int cmp_timpjucat(JOCVIDEO j1, JOCVIDEO j2)
 		return j2.timp_jucat.min - j1.timp_jucat.min;
 	return j2.timp_jucat.sec - j1.timp_jucat.sec;
 }
-
 int cmp_pret(JOCVIDEO j1, JOCVIDEO j2)
 {
 	return j1.pret[EUR] - j2.pret[EUR];
-}
-
-void text_to_int(const char* text, int* n)
-{
-	if(text == NULL)
-		return;
-
-	*n = 0;
-	int neg = (text[0] != '-')? 0: 1;
-	int i = neg;
-
-	while(text[i] != '\0' && (text[i] >= '0' && text[i] <= '9') && (i - neg) < 10) //10 - maxim int limit
-	{
-		int cif = (int)text[i] - (int)'0';
-
-		if(neg == 1)
-			*n = *n * 10 - cif;
-		else
-			*n = *n * 10 + cif;
-		i++;
-	}
-}
-void text_to_float(const char* text, float* n)
-{
-	if(text == NULL)
-		return;
-
-	*n = 0;
-	int neg = (text[0] != '-')? 0: 1;
-	int i = neg;
-
-	while(text[i] != '\0' && text[i] != '.' && (text[i] >= '0' && text[i] <= '9'))
-	{
-		int cif = (int)text[i] - (int)'0';
-
-		if(neg == 1)
-			*n = *n * 10 - cif;
-		else
-			*n = *n * 10 + cif;
-		i++;
-	}
-
-	if(text[i] != '.')
-		return;
-
-	i++;
-	float zecimal = 0.0;
-	float factor = 0.1;
-	while(text[i] != '\0' && (text[i] >= '0' && text[i] <= '9'))
-	{
-		int cif = (int)text[i] - (int)'0';
-
-		zecimal += cif * factor;
-		factor *= 0.1;
-
-		i++;
-	}
-
-	if(neg == 0)
-		*n += zecimal;
-	else
-		*n -= zecimal;
 }

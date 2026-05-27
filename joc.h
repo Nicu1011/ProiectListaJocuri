@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include "valuta.h"
 #include "tag.h"
 
@@ -22,6 +21,7 @@ typedef enum{
 	TIMPJUCAT,
 	SPATIU_NECESAR,
 	PRET,
+	TAGURI,
 
 	NR_PARAMETRI
 } PARAMETRIJOC;
@@ -44,18 +44,18 @@ typedef struct data DATA;
 struct jocvideo{
 	char nume[50];
 	char dezvoltator[50], publicant[50];
-	int taguri[NR_TAGURI];
 
 	int favorit;
 	int clasament;
 	int nota;
+	int taguri[NR_TAGURI];
 
 	DATA data_lansare, data_primu_joc, data_ultim_joc;
 	TIMP timp_jucat;
 
-	float spatiu_necesar; //GB
+	float spatiu_necesar;
 
-	float pret[NR_MONEDE], pret_timp_jucat[NR_MONEDE];
+	float pret[NR_MONEDE];
 
 };
 typedef struct jocvideo JOCVIDEO;
@@ -68,7 +68,7 @@ struct nodjoc{
 };
 typedef struct nodjoc NODJOC;
 
-//functii lista
+/* functii lista */
 void insert(NODJOC** start, const JOCVIDEO joc);
 void insert_at(NODJOC** start, const JOCVIDEO joc, const int at_index);
 void delete_at(NODJOC** start, const int at_index);
@@ -81,8 +81,8 @@ void set_at(NODJOC** start, JOCVIDEO joc, const int at_index);
 int get_num(NODJOC* start);
 void free_lista(NODJOC** start);
 
-//functii pentru sortare
-void sortare(NODJOC** start, int (*f)(JOCVIDEO, JOCVIDEO));
+/* functii pentru sortare */
+void sortare(NODJOC** start, int (*cmp)(JOCVIDEO, JOCVIDEO));
 void swap_joc(JOCVIDEO* j1, JOCVIDEO* j2);
 
 int cmp_clasament(JOCVIDEO j1, JOCVIDEO j2);
@@ -91,9 +91,5 @@ int cmp_favorit(JOCVIDEO j1, JOCVIDEO j2);
 int cmp_nota(JOCVIDEO j1, JOCVIDEO j2);
 int cmp_timpjucat(JOCVIDEO j1, JOCVIDEO j2);
 int cmp_pret(JOCVIDEO j1, JOCVIDEO j2);
-
-//functii diverse
-void text_to_int(const char* text, int* n);
-void text_to_float(const char* text, float* n);
 
 #endif /* JOC_H_ */

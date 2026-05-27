@@ -3,16 +3,19 @@
 void creaza_fisier(NODJOC* start, const char* nume_fisier)
 {
 	if(start == NULL)
-		return ;
+		return;
 	if(nume_fisier == NULL)
 		nume_fisier = "lista_jocuri_default.txt";
 
 	FILE* file = fopen(nume_fisier, "w");
-	if(!file)
+	if(file == NULL)
+	{
+		printf("eroare la deschiderea fisierului 0 %s", nume_fisier);
 		exit(1);
+	}
 
 	NODJOC* curent = start;
-	while(curent!=NULL)//for(curent = *start; curent!=NULL; curent=curent->next)
+	while(curent!=NULL)/* for(curent = *start; curent!=NULL; curent=curent->next) */
 	{
 		fprintf(file, FORMAT_LISTA_W,
 				curent->joc.nume,
@@ -58,10 +61,15 @@ void citeste_fisier(NODJOC** start, const char* nume_fisier)
 		nume_fisier = "lista_jocuri_default.txt";
 
 	FILE* file = fopen(nume_fisier, "r");
-	if(!file)
+	if(file == NULL)
+	{
+		printf("eroare la deschiderea fisierului 1 %s", nume_fisier);
 		exit(1);
+	}
 
 	JOCVIDEO joc;
+	float curs[NR_MONEDE][NR_MONEDE];
+	citeste_fisier_curs(curs, NULL);
 
 	int i=0;
 	while(fscanf(file, FORMAT_LISTA_R,
@@ -93,6 +101,8 @@ void citeste_fisier(NODJOC** start, const char* nume_fisier)
 				return;
 			}
 
+		convertire_valuta(curs, joc.pret, EUR);
+
 		insert_at(start, joc, i);
 		i++;
 	}
@@ -100,12 +110,103 @@ void citeste_fisier(NODJOC** start, const char* nume_fisier)
 }
 void creaza_backup(NODJOC* start)
 {
-	char data[32];
-	char ora[32];
+	char data[50];
+	char ora[50];
 	creaza_timestamp_data(data, sizeof(data), FORMAT_DATA);
 	creaza_timestamp_ora(ora, sizeof(ora), FORMAT_ORA);
 
-	char timestamp[64];
-	sprintf(timestamp, "%s_%s.txt", data, ora);
+	char timestamp[100];
+	sprintf(timestamp, "backup_%s_%s.txt", data, ora);
 	creaza_fisier(start, timestamp);
+
+	scrie_backup(timestamp, NULL);
+}
+void scrie_backup(const char* nume_backup, const char* nume_fisier)
+{
+	if(nume_fisier == NULL)
+		nume_fisier = "lista_backupuri.txt";
+
+	FILE* file = fopen(nume_fisier, "a");
+	if(file == NULL)
+	{
+		printf("eroare la deschiderea fisierului 2 %s", nume_fisier);
+		exit(1);
+	}
+
+	fprintf(file, "%s\n", nume_backup);
+	fclose(file);
+}
+void sterge_backup(const char* nume_backup, const char* nume_fisier)
+{
+	if(nume_fisier == NULL)
+		nume_fisier = "lista_backupuri.txt";
+
+	FILE* file = fopen(nume_fisier, "r");
+	if(file == NULL)
+	{
+		printf("eroare la deschiderea fisierului 3 %s", nume_fisier);
+		exit(1);
+	}
+
+	remove(nume_backup);
+
+	char backupuri[MAX_BACKUPS][100];
+	int count = 0;
+
+	while(count < MAX_BACKUPS)
+	{
+		if(fscanf(file, "%s", backupuri[count]) != 1)
+		{
+			break;
+		}
+		count++;
+	}
+
+	fclose(file);
+
+	file = fopen(nume_fisier, "w");
+	if(file == NULL)
+	{
+		printf("eroare la deschiderea fisierului 4 %s", nume_fisier);
+		exit(1);
+	}
+
+	int i;
+	for(i = 0; i<count; i++)
+	{
+		if(strcmp(backupuri[i], nume_backup) != 0)
+			fprintf(file, "%s\n", backupuri[i]);
+	}
+
+	fclose(file);
+}
+void citeste_lista_backup(int* count, char nume_backupuri[MAX_BACKUPS][100], const char* nume_fisier)
+{
+	if(nume_fisier == NULL)
+		nume_fisier = "lista_backupuri.txt";
+
+	*count = 0;
+
+	FILE* file = fopen(nume_fisier, "r");
+	if(file == NULL)
+	{
+		printf("eroare la deschiderea fisierului 5 %s", nume_fisier);
+		exit(1);
+	}
+
+	while((*count) < MAX_BACKUPS)
+	{
+		if(fscanf(file, "%s", nume_backupuri[(*count)]) != 1)
+		{
+			fclose(file);
+			return;
+		}
+		if(strlen(nume_backupuri[(*count)]) >= 100)
+		{
+			fclose(file);
+			return;
+		}
+		(*count)++;
+	}
+	fclose(file);
 }

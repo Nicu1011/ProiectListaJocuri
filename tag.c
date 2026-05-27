@@ -7,8 +7,9 @@ const char* NUMETAG[NR_TAGURI] =
 		"PVE",
 		"PVP",
 		"COOP",
-		"FIRST_PERSON",
-		"THIRD_PERSON",
+		"1ST_PERSON",
+		"3TH_PERSON",
+		"ACTION",
 		"RPG",
 		"MMORPG",
 		"OPEN_WORLD",
@@ -23,4 +24,25 @@ const char* NUMETAG[NR_TAGURI] =
 		"STORY_RICH"
 };
 
+void preia_taguri_text(const char* text, int taguri[NR_TAGURI])
+{
+	int i;
+	for(i=0; i<NR_TAGURI; i++)
+		taguri[i] = 0;
 
+	char temp[100];
+	strcpy(temp, text);
+
+	char* cuv = strtok(temp, ",");
+
+	while(cuv != NULL)
+	{
+		for(i=0; i<NR_TAGURI; i++)
+		{
+			if(strcmp(cuv, NUMETAG[i]) == 0)
+				taguri[i] = 1;
+		}
+
+		cuv = strtok(NULL, ",");
+	}
+}
